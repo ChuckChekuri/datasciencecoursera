@@ -1,0 +1,103 @@
+---
+title: "Inference Analyis - Final Report"
+author: "Chuck Chekuri"
+date: "3/4/2017"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+
+This is the final assignment for Statistical Inference course of Data Science Specialization by John Hopkins University.
+
+This project report describes
+
+1. Inferential Analysis of Tooth Growth Data
+ 
+### Part 2. Inferential Analysis of Tooth Growth Data
+As per the rubric, this section covers four specific areas along with the code used.
+
+1. Loading the ToothGrowth data and exploratory data analyses
+2. Summary of the data 
+3. Compare tooth growth by supp and dose
+4. Inference along with conclusions and assumptions
+
+#### Loading and exploratory analysis
+Tooth Growth Data is a set of observatons of the length of odontoblasts (cells reponsible for tooth growth) in 60 Guinea Pigs that were given Vitamin C using two different supplements.
+
+This data will be explored and inferences drawn on the effect of Vitamin C on these Guinea Pigs.
+
+```{r load, echo=FALSE, include=FALSE}
+library(dplyr)
+data(ToothGrowth)
+```
+A quick look at the data reveals that the 60 guinea pigs were equally distributed for each of the two supplements(OJ, VC) and the three dosage levels (0.5,1,2).
+``` {r tbl, echo=FALSE, include=TRUE}
+table(Dosage=ToothGrowth$dose, Supplement=ToothGrowth$supp)
+# a quick summary of length shows that it varies considerably.
+summary(ToothGrowth)
+```
+
+#### How does the length vary by dose and supplement?
+```{r boxplots }
+library(ggplot2)
+qplot(y=len, x=as.factor(dose), data=ToothGrowth, geom=c("boxplot","smooth","point"), facets=.~supp)
+```
+
+From the box plot the mean len of "OJ" group and "VC" group seem to be different.  We need to do a t.test to make sure the difference is 
+statistically significant.
+
+**Assuption:** The observations are on different Guinea Pigs and hence the observations of len or not paired. 
+Since we are we are testing if the means are statisitcal same. It will be a two sided t.test 
+
+#### How does the tooth growth effected by supplements
+The code below creates two groups an supp a performs un paied t.test and it's two sided because we are testing if the means are the same.
+
+``` {r len, echo=TRUE, include=TRUE}
+g_vc <- ToothGrowth$len[ToothGrowth$supp=="VC"];
+g_oj <- ToothGrowth$len[ToothGrowth$supp=="OJ"];
+ttest <- t.test(g_vc, g_oj, paired = FALSE, alternative = "two.sided")
+l_ci <- ttest$conf.int[1]  # lower limit of confidence interval
+u_ci <- ttest$conf.int[2]  # upper limit of confidence interval
+
+ttest
+l_ci #lower confidence interval
+u_ci #upper confidence interval 
+
+```
+
+The t.test shows that the difference between the means "0" falls within the confidence interval of `r l_ci` and `r u_ci`. We fail to reject the null hypotheis and state that the difference between the means is **NOT** statistically significant. 
+
+Supplement doesn't seem to have a significant effect on tooth growth.
+
+#### How is tooth growth effected by doses
+
+The following code uses the same logic as above. Here we compare two groups of dose at a time. so we will have three t tests one for each pair
+
+``` {r dose, echo=TRUE, include=TRUE}
+d_1 <- ToothGrowth$len[ToothGrowth$dose==0.5];
+d_2 <- ToothGrowth$len[ToothGrowth$dose==1.0];
+d_3 <- ToothGrowth$len[ToothGrowth$dose==2.0];
+
+ttest1 <- t.test(d_1, d_2, paired = FALSE, alternative = "two.sided")
+ttest2 <- t.test(d_1, d_3, paired = FALSE, alternative = "two.sided")
+ttest3 <- t.test(d_2, d_3, paired = FALSE, alternative = "two.sided")
+pvals <- c(ttest1$p.value,ttest2$p.value,ttest3$p.value)
+ttest1;ttest2;ttest3
+pvals
+```
+
+All three p.values are close to zero and the confidence intervals on all three t.tests show that "0" is outside the interval. We can safely reject the null hypothesis and conclude that the dose has a significant effect on tooth growth.
+
+#### Conclusion
+Only one of the two predictor variables, dose and supp, has a statistically significant impact on tooth growth. This is ascertained after performing t.tests on the diffeent groups of each variable. 
+
+
+
+

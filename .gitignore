@@ -1,0 +1,19 @@
+
+DataGatheringAssignment/datagatheringassignment/
+
+*.txt
+
+*.csv
+
+*.zip
+
+UCI HAR Dataset/.Rhistory
+
+rprog-data-ProgAssignment3-data/.Rhistory
+
+R Programming/.Rhistory
+
+R Programming/.RData
+
+*.pdf
+.Rproj.user
