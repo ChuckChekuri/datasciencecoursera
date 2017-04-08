@@ -1,5 +1,5 @@
 ---
-title: "ddp_pitch"
+title: "Developing Data Products"
 author: "Chuck Chekuri"
 date: "4/4/2017"
 output: slidy_presentation
@@ -13,33 +13,56 @@ library(knitr)
 getSymbols(c("GOOG"))
 ```
 
-## R Markdown
+## Simple, Easy and Powerful
 
-This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Using RStudio and R, developing a simple predictive application can't get any better.  
+This presentation shows how samll the effort to develop a fully functioning data product. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+All it took was:
 
-## Slide with Bullets
+- Three simple steps, a few Lines of code and
+- Two hours from conception to completion. 
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+It's amazing how quickly and effectively one can develop a predictive application.   
+The next two slides show the effort and the final data product.
 
-## Plot the close prices
+You can check out the application at:
+  https://cc92887.shinyapps.io/stockprediction/  
+ 
+Github repo: https://github.com/ChuckChekuri/datasciencecoursera/tree/master/DataProductsFinal/StockPrediction
+  
 
-```{r getstock, echo = FALSE}
+## The Effort
+
+All data product have these three steps and this is no different.
+
+- Get the data from the internet
+- Describe the UI
+- React to user input
+
+Shiny and the R libraries take care of all the deails of rendering, connecting, synchronzing and appearance.
+
+
+## The Data Product
+
+The product displayes the Stock data and predicts what the close will be the next day.
+
+```{r getstock, echo = FALSE, fig.height=4}
   	adjPrice <- GOOG[,6]
   	colnames(adjPrice) <- "Close"
-  	plot(adjPrice, main=paste0("Close Prices for GOOG"))
-
-```
-
-## Show the prediction
-
-```{r prediction, echo=FALSE}
-        colnames(adjPrice) <- "Close"
+  	plot(adjPrice, 
+  	     main=paste0("Close Prices for GOOG"))
   	fit  <- auto.arima(adjPrice)
   	preds <-forecast(fit, h=2)
-  	kable(preds)
+  	pp <- data.frame(preds$mean, preds$lower, preds$upper)
+  	colnames(pp) <- c("Prediction", "Low80", "Low95", "High80", "High95")
+
+   kable(pp,format = "html")
 ```
 
+
+## Conclusion
+
+R is so powerful and easy to use, it is going to change the way we develop data products and the pace with which apps will be developed will be amazing.  
+
+R, Shiny and R Studio will do what Apple's App Store did to the mobile application market. 
